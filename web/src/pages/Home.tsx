@@ -38,11 +38,23 @@ export function HomePage() {
     }
   };
 
-  const renderTab = (opt: { value: string; label: string }, _state: { active: boolean; disabled: boolean }) => (
-    <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
+  const renderTab = (
+    opt: { value: string; label: string },
+    state: { active: boolean; disabled: boolean; onSelect: () => void }
+  ) => (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={state.active}
+      disabled={state.disabled}
+      tabIndex={state.active ? 0 : -1}
+      onClick={state.onSelect}
+      className={`magi-segmented-item ${state.active ? "magi-segmented-item--active" : ""}`}
+      style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%", height: "100%" }}
+    >
       {opt.value === "human" ? <User size={14} aria-hidden="true" /> : <Bot size={14} aria-hidden="true" />}
       <span>{opt.label}</span>
-    </div>
+    </button>
   );
 
   return (
