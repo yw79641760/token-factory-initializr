@@ -16,9 +16,13 @@ import { useSeo } from "../seo/useSeo";
 /**
  * Home — the entry point.
  *
- * Layout:
- *   [Left: eyebrow + headline + subhead]
- *   [Right: sidebar card with tabs + doc links]
+ * Layout (lobehub-icons inspired):
+ *   [Left: eyebrow + headline + subhead, left-aligned]
+ *   [Right: sidebar card (~280px)]
+ *     └── Tab switcher (Human / Agent with icons)
+ *         ├── Human panel: single box, 3 step titles vertically stacked
+ *         └── Agent panel: single line prompt + copy icon
+ *     └── Doc links (llms.txt · agents.md)
  */
 export function HomePage() {
   const navigate = useNavigate();
@@ -34,7 +38,7 @@ export function HomePage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch {
-      // Clipboard API may be blocked; fallback to manual selection.
+      // Clipboard API may be blocked.
     }
   };
 
@@ -69,7 +73,7 @@ export function HomePage() {
 
         {/* Right sidebar card */}
         <div className="tfi-home-sidebar">
-          {/* Tab switcher */}
+          {/* Tab switcher — Human / Agent with icons */}
           <Segmented
             value={tab}
             onChange={(v) => setTab(v as "human" | "agent")}
@@ -81,20 +85,14 @@ export function HomePage() {
             className="tfi-home-tabs"
           />
 
-          {/* Content panel based on tab */}
+          {/* Content panel */}
           <div className="tfi-home-panel">
             {tab === "human" && (
               <div className="tfi-home-human-panel" data-testid="home-human-panel">
                 <ol className="tfi-home-steps">
-                  <li className="tfi-home-step">
-                    <span className="tfi-home-step-title">{ts("home.step1Title")}</span>
-                  </li>
-                  <li className="tfi-home-step">
-                    <span className="tfi-home-step-title">{ts("home.step2Title")}</span>
-                  </li>
-                  <li className="tfi-home-step">
-                    <span className="tfi-home-step-title">{ts("home.step3Title")}</span>
-                  </li>
+                  <li className="tfi-home-step">{ts("home.step1Title")}</li>
+                  <li className="tfi-home-step">{ts("home.step2Title")}</li>
+                  <li className="tfi-home-step">{ts("home.step3Title")}</li>
                 </ol>
                 <div className="tfi-home-cta">
                   <Button
@@ -111,34 +109,19 @@ export function HomePage() {
 
             {tab === "agent" && (
               <div className="tfi-home-agent-panel" data-testid="home-agent-panel">
-                <div className="tfi-home-agent-instruction">
-                  <pre
-                    className="magi-code tfi-home-agent-prompt"
-                    data-testid="home-agent-prompt"
-                    aria-label="Agent bootstrap prompt"
-                  >
-                    <code>{dict.home.agentPromptInline}</code>
-                  </pre>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={onCopy}
-                    data-testid="home-agent-copy"
+                <div className="tfi-home-agent-row">
+                  <code className="tfi-home-agent-prompt" data-testid="home-agent-prompt">
+                    {dict.home.agentPromptInline}
+                  </code>
+                  <button
+                    type="button"
                     aria-label={ts("home.agentCopyButton")}
-                    className="tfi-home-agent-copy-btn"
+                    data-testid="home-agent-copy"
+                    className={`tfi-home-copy-btn ${copied ? "tfi-home-copied" : ""}`}
+                    onClick={onCopy}
                   >
-                    {copied ? (
-                      <>
-                        <Copy size={14} aria-hidden="true" className="tfi-home-copied-icon" />
-                        <span>{ts("home.agentCopiedLabel")}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy size={14} aria-hidden="true" />
-                        <span>{ts("home.agentCopyButton")}</span>
-                      </>
-                    )}
-                  </Button>
+                    <Copy size={14} aria-hidden="true" />
+                  </button>
                 </div>
               </div>
             )}
