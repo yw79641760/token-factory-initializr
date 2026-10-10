@@ -147,7 +147,7 @@ suite("en locale: step headings and CTA (§6)", () => {
   checkContains("step1Title present", EN_HOME?.step1Title ?? "", "Define");
   checkContains("step2Title present", EN_HOME?.step2Title ?? "", "Browse");
   checkContains("step3Title present", EN_HOME?.step3Title ?? "", "Generate");
-  checkContains("browseModelsButton present", EN_HOME?.browseModelsButton ?? "", "Browse");
+  checkContains("browseModelsButton present", EN_HOME?.browseModelsButton ?? "", "Start");
 });
 
 suite("en locale: documentation link label (§8)", () => {

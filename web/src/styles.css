@@ -1113,18 +1113,22 @@
 }
 
 /* ============================================================
- * Homepage — lobehub-style sidebar layout (single source of truth)
+ * Homepage — lobehub-style sidebar layout
  *
  * Structure:
  *   [Left: eyebrow + headline + subhead, left-aligned]
- *   [Right: sidebar card ~280px, baseline-aligned with headline]
+ *   [Right: sidebar card ~280px, top edge aligned with the headline]
  *     └── Tab switcher (Human / Agent with icons, full-width)
- *         ├── Human panel: numbered steps 1/2/3 in one frame
+ *         ├── Human panel: numbered steps 1/2/3 + Start button below
  *         └── Agent panel: intro line + single-line prompt row + copy icon
  *     └── Doc links (llms.txt · agents.md)
  *
- * Radii: sidebar = md(10) > tabs wrapper = sm(6) > tab item = sm(6)
- * (nested boxes each step down one radius token, per MAGI layering)
+ * Geometry invariants:
+ *   - columns align-items: flex-start; sidebar margin-top pushes its
+ *     top edge down to the headline's top edge (h1 UA margin reset).
+ *   - sidebar and tabs are border-box so 100% width stays inside.
+ *   - tab item wrapper <div>s stretch to fill the segmented control;
+ *     the items fill their wrappers via width:100%/height:100%.
  * ============================================================ */
 
 .tfi-home-section {
@@ -1136,10 +1140,14 @@
 .tfi-home-intro {
   text-align: left;
   max-width: 640px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .tfi-home-headline {
+  margin-top: 0; /* reset UA 0.67em margin so gap rhythm governs */
   margin-bottom: var(--magi-space-2);
+  line-height: 1.1;
 }
 
 .tfi-home-subhead {
@@ -1148,68 +1156,94 @@
   color: var(--magi-text-secondary);
 }
 
-/* Baseline-align sidebar with headline so sidebar starts at same vertical level */
 .tfi-home-intro-wrap {
-  position: relative;
   flex: 0 0 auto;
+  min-width: 0;
 }
 
-/* Two-column hero: intro left, sidebar right */
+/* Two-column hero: intro left, sidebar right, tops aligned */
 .tfi-home-columns {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: var(--magi-space-10);
 }
 
-.tfi-home-intro { flex: 1 1 auto; min-width: 0; }
-
-/* Right sidebar card — ~1/4 page width, baseline-aligned with headline */
+/* Right sidebar card — top edge aligned with the headline.
+ * margin-top = eyebrow height (21px) + Stack gap (16px) = ~37px,
+ * measured at 1280px; tokens keep it stable across widths. */
 .tfi-home-sidebar {
-  flex: 0 0 300px;
-  width: 300px;
+  flex: 0 0 280px;
+  width: 280px;
+  max-width: 40vw;
+  box-sizing: border-box;
   background: var(--magi-surface-elevated);
   border: 1px solid var(--magi-border);
   border-radius: var(--magi-radius-md);
-  padding: var(--magi-space-4);
+  padding: 0;
   box-shadow: var(--magi-shadow-sm);
-  vertical-align: baseline;
+  margin-top: 37px;
 }
 
-/* Tab switcher — full sidebar width */
-.tfi-home-tabs {
-  margin-bottom: var(--magi-space-4);
-  width: 100%;
-}
-
+/* Tab switcher — Segmented wrapper gets .magi-segmented + .tfi-home-tabs
+ * on the SAME element; compound selector out-specifies the DS base. */
 .tfi-home-tabs.magi-segmented {
-  border-radius: var(--magi-radius-sm);
+  display: flex;
+  width: auto; /* margins inset the control; auto fills remaining width */
+  box-sizing: border-box;
+  margin: var(--magi-space-3);
+  margin-bottom: 0;
+  padding: 4px;
+  gap: 2px;
   background: var(--magi-surface);
+  border: 1px solid var(--magi-border);
+  border-radius: var(--magi-radius-sm);
+}
+
+/* Per-option wrapper <div> — stretch each half of the control */
+.tfi-home-tabs > div {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
 }
 
 .tfi-home-tabs .magi-segmented-item {
-  border-radius: calc(var(--magi-radius-sm) - 2px);
-  padding: 6px 10px;
+  flex: 1 1 0;
+  width: 100%;
   height: 32px;
+  padding: 0 var(--magi-space-4);
   font-size: 12px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
+  background: transparent;
+  border: none;
+  border-radius: var(--magi-radius-sm);
+  color: var(--magi-text-secondary);
+  transition:
+    background-color var(--magi-duration-fast) var(--magi-ease-standard),
+    color var(--magi-duration-fast) var(--magi-ease-standard);
 }
 
 .tfi-home-tabs .magi-segmented-item--active {
   background: var(--magi-accent-soft);
   color: var(--magi-accent);
-  box-shadow: inset 0 0 0 1px var(--magi-accent);
+}
+
+/* Content panel wrapper — inset like the tabs */
+.tfi-home-panel {
+  padding: var(--magi-space-3) var(--magi-space-3) 0;
 }
 
 /* Human panel — numbered steps */
 .tfi-home-human-panel {
   border: 1px solid var(--magi-border);
   border-radius: var(--magi-radius-sm);
-  padding: var(--magi-space-3) var(--magi-space-4);
+  padding: var(--magi-space-4);
   background: var(--magi-surface);
   width: 100%;
+  box-sizing: border-box;
 }
 
 .tfi-home-human-panel .tfi-home-steps {
@@ -1222,8 +1256,9 @@
 }
 
 .tfi-home-step {
+  display: flex;
+  align-items: baseline;
   font-size: 13px;
-  font-weight: 500;
   color: var(--magi-text-primary);
   line-height: 1.5;
   white-space: nowrap;
@@ -1231,75 +1266,116 @@
   text-overflow: ellipsis;
 }
 
+/* Fixed width for numbers so titles start at one axis */
 .tfi-home-step-num {
+  flex: 0 0 20px;
   font-size: 12px;
   font-weight: 600;
   color: var(--magi-text-tertiary);
-  margin-right: var(--magi-space-3);
+  text-align: right;
+  padding-right: var(--magi-space-3);
+  line-height: 1.5;
 }
 
 .tfi-home-step-title {
+  flex: 1 1 auto;
   font-weight: 500;
-  color: var(--magi-text-primary);
 }
 
+/* Start button below the human panel, full content width */
 .tfi-home-cta {
   margin-top: var(--magi-space-4);
 }
 
 .tfi-home-browse-btn {
   width: 100%;
+  height: 36px;
+  box-sizing: border-box;
+  border-radius: var(--magi-radius-sm);
+  border: none;
+  background: var(--magi-accent);
+  color: var(--magi-accent-contrast, #fff);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter var(--magi-duration-fast) var(--magi-ease-standard);
 }
 
-/* Agent panel — full width, prompt row + copy icon on right */
+.tfi-home-browse-btn:hover {
+  filter: brightness(1.08);
+}
+
+/* Agent panel — intro line above a single-line prompt row */
 .tfi-home-agent-panel {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column;
+  gap: var(--magi-space-2);
   border: 1px solid var(--magi-border);
   border-radius: var(--magi-radius-sm);
-  padding: 0 var(--magi-space-2) 0 var(--magi-space-3);
-  height: 36px;
+  padding: var(--magi-space-4);
   background: var(--magi-surface);
   width: 100%;
-}
-
-.tfi-home-agent-prompt {
-  flex: 1 1 auto;
-  min-width: 0;
-  font-family: var(--magi-font-mono, ui-monospace, "SFMono-Regular", "Consolas", monospace);
-  font-size: 11px;
-  line-height: 1.5;
-  color: var(--magi-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  flex: 1;
+  box-sizing: border-box;
 }
 
 .tfi-home-agent-intro {
-  margin-bottom: var(--magi-space-3);
+  margin: 0;
   font-size: 12px;
   color: var(--magi-text-secondary);
+  line-height: 1.5;
+}
+
+.tfi-home-agent-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 36px;
+  background: var(--magi-bg-raised);
+  border: 1px solid var(--magi-border);
+  border-radius: var(--magi-radius-sm);
+  box-sizing: border-box;
+}
+
+/* Single-line horizontal scroll for the prompt */
+.tfi-home-agent-prompt {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--magi-space-3);
+  margin: 0;
+  font-family: var(--magi-font-mono, ui-monospace, "SFMono-Regular", "Consolas", monospace);
+  font-size: 11px;
+  line-height: 34px;
+  color: var(--magi-text-secondary);
+  background: transparent;
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tfi-home-agent-prompt::-webkit-scrollbar {
+  display: none;
 }
 
 .tfi-home-copy-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 100%;
   padding: 0;
   background: transparent;
   border: none;
+  border-left: 1px solid var(--magi-border);
   color: var(--magi-text-tertiary);
   cursor: pointer;
-  border-radius: var(--magi-radius-sm);
-  transition: color var(--magi-duration-fast) ease, background-color var(--magi-duration-fast) ease;
+  border-radius: 0 var(--magi-radius-sm) var(--magi-radius-sm) 0;
+  transition:
+    color var(--magi-duration-fast) var(--magi-ease-standard),
+    background-color var(--magi-duration-fast) var(--magi-ease-standard);
 }
 
 .tfi-home-copy-btn:hover {
@@ -1311,13 +1387,13 @@
   color: var(--magi-accent);
 }
 
-/* Doc links inside sidebar bottom */
+/* Doc links at the bottom of the sidebar */
 .tfi-home-links {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--magi-space-2);
-  padding-top: var(--magi-space-3);
+  padding: var(--magi-space-3);
   border-top: 1px solid var(--magi-border);
 }
 
@@ -1326,7 +1402,7 @@
   text-decoration: none;
   font-size: 11px;
   font-weight: 500;
-  transition: color var(--magi-duration-fast) ease;
+  transition: color var(--magi-duration-fast) var(--magi-ease-standard);
 }
 
 .tfi-home-link:hover {
@@ -1346,6 +1422,7 @@
   }
   .tfi-home-sidebar {
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
+    margin-top: 0;
   }
 }
