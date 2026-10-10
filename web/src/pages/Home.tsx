@@ -18,10 +18,10 @@ import { useSeo } from "../seo/useSeo";
  *
  * Layout (lobehub-icons inspired):
  *   [Left: eyebrow + headline + subhead, left-aligned]
- *   [Right: sidebar card (~280px)]
- *     └── Tab switcher (Human / Agent with icons)
- *         ├── Human panel: single box, 3 step titles vertically stacked
- *         └── Agent panel: single line prompt + copy icon
+ *   [Right: sidebar card (~280px), baseline-aligned with headline]
+ *     └── Tab switcher (Human / Agent with icons, full-width)
+ *         ├── Human panel: single box, 3 numbered step titles vertically stacked
+ *         └── Agent panel: intro line + single-line scrollable prompt row + copy icon
  *     └── Doc links (llms.txt · agents.md)
  */
 export function HomePage() {
@@ -65,76 +65,88 @@ export function HomePage() {
     <Section className="tfi-home-section">
       <Container>
         <div className="tfi-home-columns">
-          {/* Left-aligned intro block */}
-          <Stack gap="4" className="tfi-home-intro">
-            <span className="magi-eyebrow">{ts("home.eyebrow")}</span>
-            <h1 className="magi-display tfi-home-headline">{ts("home.headline")}</h1>
-            <p className="magi-body-lg tfi-home-subhead">{ts("home.subhead")}</p>
-          </Stack>
-
-        {/* Right sidebar card */}
-        <div className="tfi-home-sidebar">
-          {/* Tab switcher — Human / Agent with icons */}
-          <Segmented
-            value={tab}
-            onChange={(v) => setTab(v as "human" | "agent")}
-            options={[
-              { value: "human", label: ts("home.humanTab") },
-              { value: "agent", label: ts("home.agentTab") },
-            ]}
-            children={renderTab}
-            className="tfi-home-tabs"
-          />
-
-          {/* Content panel */}
-          <div className="tfi-home-panel">
-            {tab === "human" && (
-              <div className="tfi-home-human-panel" data-testid="home-human-panel">
-                <ol className="tfi-home-steps">
-                  <li className="tfi-home-step">{ts("home.step1Title")}</li>
-                  <li className="tfi-home-step">{ts("home.step2Title")}</li>
-                  <li className="tfi-home-step">{ts("home.step3Title")}</li>
-                </ol>
-                <div className="tfi-home-cta">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => navigate("/browse")}
-                    className="tfi-home-browse-btn"
-                  >
-                    {ts("home.browseModelsButton")}
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {tab === "agent" && (
-              <div className="tfi-home-agent-panel" data-testid="home-agent-panel">
-                <div className="tfi-home-agent-row">
-                  <code className="tfi-home-agent-prompt" data-testid="home-agent-prompt">
-                    {dict.home.agentPromptInline}
-                  </code>
-                  <button
-                    type="button"
-                    aria-label={ts("home.agentCopyButton")}
-                    data-testid="home-agent-copy"
-                    className={`tfi-home-copy-btn ${copied ? "tfi-home-copied" : ""}`}
-                    onClick={onCopy}
-                  >
-                    <Copy size={14} aria-hidden="true" />
-                  </button>
-                </div>
-              </div>
-            )}
+          {/* Left-aligned intro block — baseline-aligned with sidebar */}
+          <div className="tfi-home-intro-wrap">
+            <Stack gap="4" className="tfi-home-intro">
+              <span className="magi-eyebrow">{ts("home.eyebrow")}</span>
+              <h1 className="magi-display tfi-home-headline">{ts("home.headline")}</h1>
+              <p className="magi-body-lg tfi-home-subhead">{ts("home.subhead")}</p>
+            </Stack>
           </div>
 
-          {/* Shared doc links */}
-          <div className="tfi-home-links">
-            <a href="/llms.txt" target="_blank" rel="noreferrer" className="tfi-home-link">llms.txt</a>
-            <span className="tfi-home-separator" aria-hidden="true">·</span>
-            <a href="/agents.md" target="_blank" rel="noreferrer" className="tfi-home-link">agents.md</a>
+          {/* Right sidebar card — baseline-aligned with headline */}
+          <div className="tfi-home-sidebar">
+            {/* Tab switcher — Human / Agent with icons, full sidebar width */}
+            <Segmented
+              value={tab}
+              onChange={(v) => setTab(v as "human" | "agent")}
+              options={[
+                { value: "human", label: ts("home.humanTab") },
+                { value: "agent", label: ts("home.agentTab") },
+              ]}
+              children={renderTab}
+              className="tfi-home-tabs"
+            />
+
+            {/* Content panel */}
+            <div className="tfi-home-panel">
+              {tab === "human" && (
+                <div className="tfi-home-human-panel" data-testid="home-human-panel">
+                  <ol className="tfi-home-steps">
+                    <li className="tfi-home-step">
+                      <span className="tfi-home-step-num">1</span>
+                      <span className="tfi-home-step-title">{ts("home.step1Title")}</span>
+                    </li>
+                    <li className="tfi-home-step">
+                      <span className="tfi-home-step-num">2</span>
+                      <span className="tfi-home-step-title">{ts("home.step2Title")}</span>
+                    </li>
+                    <li className="tfi-home-step">
+                      <span className="tfi-home-step-num">3</span>
+                      <span className="tfi-home-step-title">{ts("home.step3Title")}</span>
+                    </li>
+                  </ol>
+                  <div className="tfi-home-cta">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => navigate("/browse")}
+                      className="tfi-home-browse-btn"
+                    >
+                      {ts("home.browseModelsButton")}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {tab === "agent" && (
+                <div className="tfi-home-agent-panel" data-testid="home-agent-panel">
+                  <p className="tfi-home-agent-intro">{ts("home.agentPanelIntro")}</p>
+                  <div className="tfi-home-agent-row">
+                    <code className="tfi-home-agent-prompt" data-testid="home-agent-prompt">
+                      {dict.home.agentPromptInline}
+                    </code>
+                    <button
+                      type="button"
+                      aria-label={ts("home.agentCopyButton")}
+                      data-testid="home-agent-copy"
+                      className={`tfi-home-copy-btn ${copied ? "tfi-home-copied" : ""}`}
+                      onClick={onCopy}
+                    >
+                      <Copy size={14} aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Shared doc links */}
+            <div className="tfi-home-links">
+              <a href="/llms.txt" target="_blank" rel="noreferrer" className="tfi-home-link">llms.txt</a>
+              <span className="tfi-home-separator" aria-hidden="true">·</span>
+              <a href="/agents.md" target="_blank" rel="noreferrer" className="tfi-home-link">agents.md</a>
+            </div>
           </div>
-        </div>
         </div>
       </Container>
     </Section>

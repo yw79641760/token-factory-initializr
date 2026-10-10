@@ -120,7 +120,8 @@ Do not expose or modify secrets. Preserve my existing configuration unless I exp
     step2Desc: "浏览可用模型，检查它们的能力和来源，挑选最合适的候选。",
     step3Title: "生成配置",
     step3Desc: "选择受支持的 Token Factory 实现，选中候选模型，为你的环境生成配置。",
-    browseModelsButton: "浏览模型",
+    agentPanelIntro: "将此提示发送给 Agent，以使用 TFI 服务。",
+    browseModelsButton: "开始",
     /** Shared footer link label — points at the Markdown-level docs. */
     documentationLink: "文档",
   },

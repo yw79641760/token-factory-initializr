@@ -1116,8 +1116,12 @@
  * Homepage — lobehub-style sidebar layout (single source of truth)
  *
  * Structure:
- *   [Left intro: eyebrow / headline / subhead — left-aligned]
- *   [Right sidebar card 280px: tabs + panel + doc links]
+ *   [Left: eyebrow + headline + subhead, left-aligned]
+ *   [Right: sidebar card ~280px, baseline-aligned with headline]
+ *     └── Tab switcher (Human / Agent with icons, full-width)
+ *         ├── Human panel: numbered steps 1/2/3 in one frame
+ *         └── Agent panel: intro line + single-line prompt row + copy icon
+ *     └── Doc links (llms.txt · agents.md)
  *
  * Radii: sidebar = md(10) > tabs wrapper = sm(6) > tab item = sm(6)
  * (nested boxes each step down one radius token, per MAGI layering)
@@ -1128,7 +1132,7 @@
   padding-bottom: var(--magi-space-12);
 }
 
-/* Left intro — left-aligned, unchanged from pre-redesign layout */
+/* Left intro — left-aligned */
 .tfi-home-intro {
   text-align: left;
   max-width: 640px;
@@ -1144,16 +1148,22 @@
   color: var(--magi-text-secondary);
 }
 
+/* Baseline-align sidebar with headline so sidebar starts at same vertical level */
+.tfi-home-intro-wrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+
 /* Two-column hero: intro left, sidebar right */
 .tfi-home-columns {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   gap: var(--magi-space-10);
 }
 
 .tfi-home-intro { flex: 1 1 auto; min-width: 0; }
 
-/* Right sidebar card — ~1/4 page width */
+/* Right sidebar card — ~1/4 page width, baseline-aligned with headline */
 .tfi-home-sidebar {
   flex: 0 0 300px;
   width: 300px;
@@ -1162,11 +1172,13 @@
   border-radius: var(--magi-radius-md);
   padding: var(--magi-space-4);
   box-shadow: var(--magi-shadow-sm);
+  vertical-align: baseline;
 }
 
-/* Tab switcher — wrapper radius one step down from sidebar */
+/* Tab switcher — full sidebar width */
 .tfi-home-tabs {
   margin-bottom: var(--magi-space-4);
+  width: 100%;
 }
 
 .tfi-home-tabs.magi-segmented {
@@ -1191,12 +1203,13 @@
   box-shadow: inset 0 0 0 1px var(--magi-accent);
 }
 
-/* Human panel — ONE box, 3 step titles stacked vertically, plain text */
+/* Human panel — numbered steps */
 .tfi-home-human-panel {
   border: 1px solid var(--magi-border);
   border-radius: var(--magi-radius-sm);
   padding: var(--magi-space-3) var(--magi-space-4);
   background: var(--magi-surface);
+  width: 100%;
 }
 
 .tfi-home-human-panel .tfi-home-steps {
@@ -1218,6 +1231,18 @@
   text-overflow: ellipsis;
 }
 
+.tfi-home-step-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--magi-text-tertiary);
+  margin-right: var(--magi-space-3);
+}
+
+.tfi-home-step-title {
+  font-weight: 500;
+  color: var(--magi-text-primary);
+}
+
 .tfi-home-cta {
   margin-top: var(--magi-space-4);
 }
@@ -1226,7 +1251,7 @@
   width: 100%;
 }
 
-/* Agent panel — one-line prompt + icon-only copy button to its right */
+/* Agent panel — full width, prompt row + copy icon on right */
 .tfi-home-agent-panel {
   display: flex;
   align-items: center;
@@ -1236,6 +1261,7 @@
   padding: 0 var(--magi-space-2) 0 var(--magi-space-3);
   height: 36px;
   background: var(--magi-surface);
+  width: 100%;
 }
 
 .tfi-home-agent-prompt {
@@ -1243,7 +1269,7 @@
   min-width: 0;
   font-family: var(--magi-font-mono, ui-monospace, "SFMono-Regular", "Consolas", monospace);
   font-size: 11px;
-  line-height: 1;
+  line-height: 1.5;
   color: var(--magi-text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -1251,6 +1277,13 @@
   padding: 0;
   margin: 0;
   background: transparent;
+  flex: 1;
+}
+
+.tfi-home-agent-intro {
+  margin-bottom: var(--magi-space-3);
+  font-size: 12px;
+  color: var(--magi-text-secondary);
 }
 
 .tfi-home-copy-btn {
@@ -1258,8 +1291,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   background: transparent;
   border: none;

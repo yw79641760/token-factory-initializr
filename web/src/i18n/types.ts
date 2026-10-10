@@ -143,6 +143,7 @@ export interface TranslationTree {
     step2Desc: string;
     step3Title: string;
     step3Desc: string;
+    agentPanelIntro: string;
     browseModelsButton: string;
     /** Shared footer link label — points at the Markdown-level docs. */
     documentationLink: string;

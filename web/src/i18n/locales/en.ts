@@ -121,7 +121,8 @@ Do not expose or modify secrets. Preserve my existing configuration unless I exp
     step2Desc: "Explore available models, inspect their capabilities and available sources, and select suitable candidates.",
     step3Title: "Generate config",
     step3Desc: "Choose a supported Token Factory implementation, select your candidate models, and generate a configuration for your setup.",
-    browseModelsButton: "Browse models",
+    agentPanelIntro: "Send this prompt to your agent to use TFI service.",
+    browseModelsButton: "Start",
     /** Shared footer link label — points at the Markdown-level docs. */
     documentationLink: "Documentation",
   },
