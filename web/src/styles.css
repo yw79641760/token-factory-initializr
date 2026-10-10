@@ -1172,8 +1172,8 @@
  * margin-top = eyebrow height (21px) + Stack gap (16px) = ~37px,
  * measured at 1280px; tokens keep it stable across widths. */
 .tfi-home-sidebar {
-  flex: 0 0 280px;
-  width: 280px;
+  flex: 0 0 300px;
+  width: 300px;
   max-width: 40vw;
   box-sizing: border-box;
   background: var(--magi-surface-elevated);
@@ -1394,7 +1394,6 @@
   justify-content: center;
   gap: var(--magi-space-2);
   padding: var(--magi-space-3);
-  border-top: 1px solid var(--magi-border);
 }
 
 .tfi-home-link {
