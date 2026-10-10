@@ -64,12 +64,13 @@ export function HomePage() {
   return (
     <Section className="tfi-home-section">
       <Container>
-        {/* Left-aligned intro block */}
-        <Stack gap="4" className="tfi-home-intro">
-          <span className="magi-eyebrow">{ts("home.eyebrow")}</span>
-          <h1 className="magi-display tfi-home-headline">{ts("home.headline")}</h1>
-          <p className="magi-body-lg tfi-home-subhead">{ts("home.subhead")}</p>
-        </Stack>
+        <div className="tfi-home-columns">
+          {/* Left-aligned intro block */}
+          <Stack gap="4" className="tfi-home-intro">
+            <span className="magi-eyebrow">{ts("home.eyebrow")}</span>
+            <h1 className="magi-display tfi-home-headline">{ts("home.headline")}</h1>
+            <p className="magi-body-lg tfi-home-subhead">{ts("home.subhead")}</p>
+          </Stack>
 
         {/* Right sidebar card */}
         <div className="tfi-home-sidebar">
@@ -133,6 +134,7 @@ export function HomePage() {
             <span className="tfi-home-separator" aria-hidden="true">·</span>
             <a href="/agents.md" target="_blank" rel="noreferrer" className="tfi-home-link">agents.md</a>
           </div>
+        </div>
         </div>
       </Container>
     </Section>
